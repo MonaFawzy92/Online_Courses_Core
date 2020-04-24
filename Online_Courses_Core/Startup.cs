@@ -14,6 +14,9 @@ using Online_Courses_Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Online_Courses_Core.Repository;
+using Online_Courses_Core.Service;
+using Online_Courses_Core.AppStart;
 
 namespace Online_Courses_Core
 {
@@ -31,6 +34,8 @@ namespace Online_Courses_Core
         {
             services.AddIdentity<User, ApplicationRole>()
             .AddEntityFrameworkStores<Context>();
+            MappingConfig.RegisterMapps();
+            services.AddCors();
             services.AddDbContext<Context>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -47,6 +52,9 @@ namespace Online_Courses_Core
                 };
             });
             services.AddControllers();
+            services.AddScoped<CourseRepository, CourseRepository>();
+            services.AddScoped<CourseService, CourseService>();
+            services.AddTransient<Context, Context>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +69,11 @@ namespace Online_Courses_Core
 
             app.UseRouting();
 
+            app.UseCors(options =>
+            options.WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
             app.UseAuthorization();
 
             app.UseAuthentication();
@@ -69,6 +82,7 @@ namespace Online_Courses_Core
             {
                 endpoints.MapControllers();
             });
+            app.UseStaticFiles();
         }
     }
 }
