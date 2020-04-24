@@ -36,5 +36,6 @@ namespace Online_Courses_Core.Models
         public DbSet<CourseLanguage> CourseLanguages { get; set; }
         public DbSet<UserCourse> UserCourses { get; set; }
 
+
     }
 }
